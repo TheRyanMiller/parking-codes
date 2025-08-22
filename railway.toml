@@ -1,5 +1,5 @@
 [build]
-buildCommand = "cd server && npm install && cd ../client && npm install && npm run build && mkdir -p ../server/public && cp -r build/* ../server/public/"
+buildCommand = "cd client && npm run build && mkdir -p ../server/public && cp -r build/* ../server/public/"
 
 [deploy]
 startCommand = "cd server && npm start"
