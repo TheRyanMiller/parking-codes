@@ -58,116 +58,16 @@ router.post('/resident/login', async (req, res) => {
           }
         );
 
-        // Check if resident needs codes assigned for current month
-        const currentMonth = new Date().toISOString().slice(0, 7);
-        db.get(
-          'SELECT COUNT(*) as assigned_count FROM parking_codes WHERE resident_id = ? AND month_key = ?',
-          [resident.id, currentMonth],
-          (countErr, countResult) => {
-            if (countErr) {
-              console.error('Error checking assigned codes:', countErr);
-              // Continue with login even if code assignment fails
-              return res.json({
-                token,
-                user: {
-                  id: resident.id,
-                  name: resident.name,
-                  email: resident.email,
-                  unit: resident.unit,
-                  role: 'resident'
-                }
-              });
-            }
-
-            // If resident has no codes assigned for current month, assign up to 4
-            if (countResult.assigned_count === 0) {
-              db.all(
-                'SELECT id, code FROM parking_codes WHERE month_key = ? AND status = "unassigned" ORDER BY id LIMIT 4',
-                [currentMonth],
-                (codesErr, availableCodes) => {
-                  if (codesErr || availableCodes.length === 0) {
-                    console.error('Error finding available codes:', codesErr);
-                    // Continue with login even if no codes available
-                    return res.json({
-                      token,
-                      user: {
-                        id: resident.id,
-                        name: resident.name,
-                        email: resident.email,
-                        unit: resident.unit,
-                        role: 'resident'
-                      }
-                    });
-                  }
-
-                  // Assign the codes
-                  db.serialize(() => {
-                    db.run('BEGIN TRANSACTION');
-                    
-                    const updatePromises = availableCodes.map(codeData => {
-                      return new Promise((resolve) => {
-                        db.run(
-                          'UPDATE parking_codes SET status = "assigned", resident_id = ?, assigned_at = CURRENT_TIMESTAMP WHERE id = ?',
-                          [resident.id, codeData.id],
-                          resolve
-                        );
-                      });
-                    });
-
-                    Promise.all(updatePromises).then(async () => {
-                      db.run('COMMIT', async (commitErr) => {
-                        if (!commitErr) {
-                          try {
-                            await logAuditEvent({
-                              actorType: 'system',
-                              actorId: 0,
-                              action: 'ASSIGN_CODES',
-                              entityType: 'parking_codes',
-                              entityId: resident.id,
-                              newValues: { 
-                                month_key: currentMonth, 
-                                resident_id: resident.id, 
-                                assigned_codes: availableCodes.map(c => ({ id: c.id, code: c.code }))
-                              },
-                              reason: 'Auto-assigned on first login',
-                              ipAddress: req.ip,
-                              userAgent: req.get('User-Agent')
-                            });
-                          } catch (auditErr) {
-                            console.error('Audit log error:', auditErr);
-                          }
-                        }
-
-                        res.json({
-                          token,
-                          user: {
-                            id: resident.id,
-                            name: resident.name,
-                            email: resident.email,
-                            unit: resident.unit,
-                            role: 'resident'
-                          }
-                        });
-                      });
-                    });
-                  });
-                }
-              );
-            } else {
-              // Resident already has codes, just return login response
-              res.json({
-                token,
-                user: {
-                  id: resident.id,
-                  name: resident.name,
-                  email: resident.email,
-                  unit: resident.unit,
-                  role: 'resident'
-                }
-              });
-            }
+        res.json({
+          token,
+          user: {
+            id: resident.id,
+            email: resident.email,
+            name: resident.name,
+            unit: resident.unit,
+            role: 'resident'
           }
-        );
+        });
       }
     );
   } catch (error) {
