@@ -6,7 +6,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "./build.sh",
+    "build": "echo 'Frontend already built and committed - skipping build'",
     "dev": "nodemon index.js", 
     "start": "node index.js"
   },
