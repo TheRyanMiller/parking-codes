@@ -5,8 +5,8 @@ echo "Installing client dependencies..."
 cd client
 npm install
 
-echo "Building React app..."
-npm run build
+echo "Building React app with explicit react-scripts..."
+./node_modules/.bin/react-scripts build
 
 echo "Copying build to public..."
 cd ..
