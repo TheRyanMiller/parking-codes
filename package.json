@@ -6,7 +6,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "cd client && npm install && npx react-scripts build && cd .. && mkdir -p public && cp -r client/build/* public/",
+    "build": "./build.sh",
     "dev": "nodemon index.js", 
     "start": "node index.js"
   },
