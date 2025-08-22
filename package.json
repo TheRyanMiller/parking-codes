@@ -10,7 +10,7 @@
     "build": "cd client && npm run build && cp -r client/build server/public",
     "start": "cd server && npm start",
     "install:all": "npm install && cd server && npm install && cd ../client && npm install",
-    "railway:build": "npm run install:all && npm run build",
+    "railway:build": "npm install && cd server && npm install && cd ../client && npm install && npm run build && mkdir -p ../server/public && cp -r build/* ../server/public/",
     "railway:start": "cd server && npm start"
   },
   "devDependencies": {
