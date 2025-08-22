@@ -44,17 +44,20 @@ app.use('/auth', authLimiter, authRoutes);
 app.use('/resident', residentRoutes);
 app.use('/admin', adminRoutes);
 
-// Serve React app in production
+// Serve a simple landing page in production (API-only deployment)
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'public')));
-  
-  app.get('*', (req, res) => {
-    if (req.path.startsWith('/api/') || req.path.startsWith('/auth/') || 
-        req.path.startsWith('/resident/') || req.path.startsWith('/admin/') ||
-        req.path === '/health') {
-      return res.status(404).json({ error: 'API endpoint not found' });
-    }
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  app.get('/', (req, res) => {
+    res.json({ 
+      message: 'Parking Codes API Server',
+      status: 'running',
+      timestamp: new Date().toISOString(),
+      endpoints: {
+        health: '/health',
+        auth: '/auth/*',
+        resident: '/resident/*',
+        admin: '/admin/*'
+      }
+    });
   });
 }
 
