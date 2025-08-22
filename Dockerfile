@@ -4,16 +4,11 @@ WORKDIR /app
 
 # Install server dependencies
 COPY server/package*.json ./server/
-RUN cd server && npm ci --only=production
+RUN cd server && npm install --only=production
 
-# Create client directory and install dependencies
-RUN mkdir -p client
-COPY client/package*.json ./client/
-RUN cd client && npm ci
-
-# Build client
+# Install client dependencies and build
 COPY client/ ./client/
-RUN cd client && npm run build
+RUN cd client && npm install && npm run build
 
 # Copy built client to server public folder
 RUN mkdir -p server/public && cp -r client/build/* server/public/
