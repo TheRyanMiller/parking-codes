@@ -20,7 +20,8 @@ const AdminLogin: React.FC = () => {
     try {
       const response = await authAPI.adminLogin(email.trim(), password);
       login(response.data.token, response.data.user);
-      navigate('/admin/dashboard');
+      // Small delay to ensure token is stored before navigation
+      setTimeout(() => navigate('/admin/dashboard'), 100);
     } catch (err: any) {
       if (err.response?.status === 429) {
         setError('Too many login attempts. Please wait a few minutes and try again.');
