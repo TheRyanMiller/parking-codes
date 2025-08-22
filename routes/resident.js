@@ -64,6 +64,73 @@ router.get('/codes', logAccess('CODES_VIEW'), (req, res) => {
   );
 });
 
+// Request codes for current month
+router.post('/request-codes', async (req, res) => {
+  try {
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    
+    // Check if resident already has codes for this month
+    const existingCodes = await db.all(
+      'SELECT id FROM parking_codes WHERE resident_id = ? AND month_key = ?',
+      [req.user.id, currentMonth]
+    );
+
+    if (existingCodes.length > 0) {
+      return res.status(400).json({ error: 'You already have codes allocated for this month' });
+    }
+
+    // Find up to 4 unallocated codes for this month
+    const availableCodes = await db.all(
+      'SELECT id, code FROM parking_codes WHERE month_key = ? AND status = "unassigned" ORDER BY id LIMIT 4',
+      [currentMonth]
+    );
+
+    if (availableCodes.length === 0) {
+      return res.status(400).json({ error: 'No codes available for allocation this month' });
+    }
+
+    // Allocate the codes to this resident
+    const allocatedCodes = [];
+    for (const codeData of availableCodes) {
+      await db.run(
+        'UPDATE parking_codes SET status = "assigned", resident_id = ?, assigned_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [req.user.id, codeData.id]
+      );
+      allocatedCodes.push({ id: codeData.id, code: codeData.code });
+    }
+
+    // Log the allocation
+    try {
+      await logAuditEvent({
+        actorType: 'resident',
+        actorId: req.user.id,
+        action: 'REQUEST_CODES',
+        entityType: 'parking_codes',
+        entityId: req.user.id,
+        newValues: { 
+          month_key: currentMonth, 
+          resident_id: req.user.id, 
+          allocated_codes: allocatedCodes
+        },
+        reason: 'Resident requested codes allocation',
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent')
+      });
+    } catch (auditErr) {
+      console.error('Audit log error:', auditErr);
+    }
+
+    res.json({ 
+      message: `Successfully allocated ${allocatedCodes.length} codes for ${currentMonth}`,
+      codes: allocatedCodes
+    });
+
+  } catch (error) {
+    console.error('Error requesting codes:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 router.post('/codes/:id/use', async (req, res) => {
   try {
     const codeId = req.params.id;

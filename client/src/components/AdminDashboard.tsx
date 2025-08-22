@@ -192,21 +192,21 @@ const AdminDashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="card card-mint hover-lift p-6">
             <div className="text-sm font-medium text-gray-500 mb-1">Total Uploaded</div>
-            <div className="text-3xl font-bold text-blue-600">{stats.uploaded}</div>
+            <div className="text-3xl font-bold text-blue-600">{stats.uploaded?.toLocaleString()}</div>
           </div>
           <button
-            onClick={() => openCodesModal('assigned', 'Assigned Codes')}
+            onClick={() => openCodesModal('assigned', 'Allocated Codes')}
             className="card card-yellow hover-lift p-6 text-left transition-all border-none cursor-pointer"
           >
-            <div className="text-sm font-medium text-gray-500 mb-1">Assigned</div>
-            <div className="text-3xl font-bold text-green-600">{stats.assigned}</div>
+            <div className="text-sm font-medium text-gray-500 mb-1">Allocated</div>
+            <div className="text-3xl font-bold text-green-600">{stats.allocated}</div>
           </button>
           <button
-            onClick={() => openCodesModal('unassigned', 'Remaining Codes')}
+            onClick={() => openCodesModal('unassigned', 'Unallocated Codes')}
             className="card card-lavender hover-lift p-6 text-left transition-all border-none cursor-pointer"
           >
-            <div className="text-sm font-medium text-gray-500 mb-1">Remaining</div>
-            <div className="text-3xl font-bold text-orange-600">{stats.remaining}</div>
+            <div className="text-sm font-medium text-gray-500 mb-1">Unallocated</div>
+            <div className="text-3xl font-bold text-orange-600">{stats.unallocated}</div>
           </button>
         </div>
       ) : (

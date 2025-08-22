@@ -45,6 +45,8 @@ export const residentAPI = {
     return api.get<ParkingCode[]>('/resident/codes', { params });
   },
   
+  requestCodes: () => api.post('/resident/request-codes'),
+  
   useCode: (id: number) => api.post(`/resident/codes/${id}/use`),
 };
 

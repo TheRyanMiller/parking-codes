@@ -709,18 +709,18 @@ router.get('/dashboard', (req, res) => {
       
       const stats = {
         uploaded: 0,
-        assigned: 0,
+        allocated: 0,
         used: 0,
         expired: 0,
-        remaining: 0
+        unallocated: 0
       };
       
       statusCounts.forEach(row => {
         if (row.status === 'unassigned') {
-          stats.remaining = row.count;
+          stats.unallocated = row.count;
           stats.uploaded += row.count;
         } else if (row.status === 'assigned') {
-          stats.assigned = row.count;
+          stats.allocated = row.count;
           stats.uploaded += row.count;
         } else if (row.status === 'used') {
           stats.used = row.count;

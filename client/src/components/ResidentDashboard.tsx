@@ -7,6 +7,7 @@ const ResidentDashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const [codes, setCodes] = useState<ParkingCode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRequestingCodes, setIsRequestingCodes] = useState(false);
   const [error, setError] = useState('');
   const [copySuccess, setCopySuccess] = useState<string | null>(null);
 
@@ -33,6 +34,20 @@ const ResidentDashboard: React.FC = () => {
       setTimeout(() => setCopySuccess(null), 2000);
     } catch (err) {
       setError('Failed to copy code to clipboard');
+    }
+  };
+
+  const requestCodes = async () => {
+    try {
+      setIsRequestingCodes(true);
+      setError('');
+      await residentAPI.requestCodes();
+      // Reload codes after successful request
+      await loadCodes();
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to request codes. Please try again.');
+    } finally {
+      setIsRequestingCodes(false);
     }
   };
 
@@ -121,18 +136,31 @@ const ResidentDashboard: React.FC = () => {
 
         {codes.length === 0 ? (
           <div className="card p-8 text-center">
-            <div className="text-orange-400 mb-4">
+            <div className="text-blue-400 mb-4">
               <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Codes Allocated</h3>
-            <p className="text-orange-600 font-medium mb-2">
-              ⚠️ You were not allocated your expected codes this month
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No Codes Yet</h3>
+            <p className="text-gray-600 mb-4">
+              You haven't requested your parking codes for {currentMonth} yet.
             </p>
-            <p className="text-gray-600">
-              Please contact the admin to resolve this issue and get your parking codes assigned.
-            </p>
+            <button
+              onClick={requestCodes}
+              disabled={isRequestingCodes}
+              className="btn btn-primary"
+            >
+              {isRequestingCodes ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Requesting...
+                </>
+              ) : (
+                <>
+                  🎫 Request Codes
+                </>
+              )}
+            </button>
           </div>
         ) : (
           <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
