@@ -10,7 +10,8 @@
     "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
     "server:dev": "cd server && npm run dev",
     "client:dev": "cd client && npm run dev",
-    "build": "npm install && cd server && npm install && cd ../client && npm install && npm run build && mkdir -p ../server/public && cp -r build/* ../server/public/",
+    "build": "cd client && npm run build && mkdir -p ../server/public && cp -r build/* ../server/public/",
+    "postinstall": "cd server && npm install && cd ../client && npm install",
     "start": "cd server && npm start"
   },
   "devDependencies": {
