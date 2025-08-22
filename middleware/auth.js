@@ -2,9 +2,12 @@ const jwt = require('jsonwebtoken');
 const db = require('../database-adapter');
 
 const verifyToken = (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
+  const authHeader = req.header('Authorization');
+  console.log('Auth header received:', authHeader);
+  const token = authHeader?.replace('Bearer ', '');
   
   if (!token) {
+    console.log('No token found in request');
     return res.status(401).json({ error: 'Access denied. No token provided.' });
   }
 

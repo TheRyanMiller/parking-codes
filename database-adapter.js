@@ -1,12 +1,14 @@
 // Database adapter - switches between SQLite (dev) and PostgreSQL (prod/test)
 const isDevelopment = process.env.NODE_ENV === 'development' && !process.env.DATABASE_URL;
 
-// Helper to convert SQLite-style ? placeholders to PostgreSQL $1, $2, etc.
+// Helper to convert SQLite-style ? placeholders and quotes to PostgreSQL format
 const convertSqlParams = (sql, params) => {
   if (isDevelopment) return { sql, params };
   
   let paramIndex = 1;
-  const convertedSql = sql.replace(/\?/g, () => `$${paramIndex++}`);
+  let convertedSql = sql.replace(/\?/g, () => `$${paramIndex++}`);
+  // Convert double quotes around string literals to single quotes for PostgreSQL
+  convertedSql = convertedSql.replace(/"([^"]+)"/g, "'$1'");
   return { sql: convertedSql, params };
 };
 
