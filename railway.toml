@@ -1,6 +1,0 @@
-[build]
-buildCommand = "cd client && npm run build && mkdir -p ../server/public && cp -r build/* ../server/public/"
-
-[deploy]
-startCommand = "cd server && npm start"
-healthcheckPath = "/health"

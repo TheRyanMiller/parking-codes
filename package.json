@@ -10,13 +10,9 @@
     "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
     "server:dev": "cd server && npm run dev",
     "client:dev": "cd client && npm run dev",
-    "build": "echo 'Build will be handled by Railway'",
+    "build": "echo 'No build needed - Railway will handle it'",
     "start": "cd server && npm start"
   },
-  "workspaces": [
-    "server",
-    "client"
-  ],
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
