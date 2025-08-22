@@ -48,10 +48,10 @@ export interface AuditLog {
 
 export interface DashboardStats {
   uploaded: number;
-  assigned: number;
+  allocated: number;
   used: number;
   expired: number;
-  remaining: number;
+  unallocated: number;
 }
 
 export interface AccessSummary {
