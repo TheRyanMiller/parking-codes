@@ -1,21 +1,29 @@
 {
   "name": "parking-codes",
   "version": "1.0.0",
-  "description": "Parking codes demo app for apartment management",
-  "main": "server/index.js",
+  "main": "index.js",
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
-    "server:dev": "cd server && npm run dev",
-    "client:dev": "cd client && npm run dev",
-    "build": "npm run install:deps && npm run build:client",
-    "install:deps": "cd server && npm install && cd ../client && npm install",
-    "build:client": "cd client && npm run build && mkdir -p ../server/public && cp -r build/* ../server/public/",
-    "start": "cd server && npm start"
+    "build": "cd client && npm install && npm run build && mkdir -p ../public && cp -r build/* ../public/",
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.16.3",
+    "sqlite3": "^5.1.6",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "nodemon": "^3.0.2"
   }
 }
