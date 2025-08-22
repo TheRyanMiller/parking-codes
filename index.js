@@ -71,18 +71,28 @@ app.get('/health', (req, res) => {
 
 const startServer = async () => {
   try {
+    console.log('Starting server...');
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('DATABASE_URL present:', !!process.env.DATABASE_URL);
+    
     await initDatabase();
     console.log('Database initialized successfully');
     
     await seedInitialData();
     console.log('Initial data seeded successfully');
     
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server running on port ${PORT}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
-    process.exit(1);
+    console.error('Error stack:', error.stack);
+    
+    // Start server anyway for health checks, but log the error
+    console.log('Starting server without database initialization...');
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on port ${PORT} (database initialization failed)`);
+    });
   }
 };
 

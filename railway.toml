@@ -4,3 +4,5 @@ healthcheckPath = "/health"
 
 [env]
 NODE_ENV = "production"
+JWT_SECRET = "railway-production-jwt-secret-change-this-in-dashboard"
+PORT = "3000"
