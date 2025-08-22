@@ -6,9 +6,12 @@ WORKDIR /app
 COPY server/package*.json ./server/
 RUN cd server && npm ci --only=production
 
-# Install client dependencies and build
+# Create client directory and install dependencies
+RUN mkdir -p client
 COPY client/package*.json ./client/
 RUN cd client && npm ci
+
+# Build client
 COPY client/ ./client/
 RUN cd client && npm run build
 
