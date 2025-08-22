@@ -716,18 +716,19 @@ router.get('/dashboard', (req, res) => {
       };
       
       statusCounts.forEach(row => {
+        const count = parseInt(row.count, 10);
         if (row.status === 'unassigned') {
-          stats.unallocated = row.count;
-          stats.uploaded += row.count;
+          stats.unallocated = count;
+          stats.uploaded += count;
         } else if (row.status === 'assigned') {
-          stats.allocated = row.count;
-          stats.uploaded += row.count;
+          stats.allocated = count;
+          stats.uploaded += count;
         } else if (row.status === 'used') {
-          stats.used = row.count;
-          stats.uploaded += row.count;
+          stats.used = count;
+          stats.uploaded += count;
         } else if (row.status === 'expired') {
-          stats.expired = row.count;
-          stats.uploaded += row.count;
+          stats.expired = count;
+          stats.uploaded += count;
         }
       });
       
