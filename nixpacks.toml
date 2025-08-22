@@ -1,8 +1,0 @@
-[phases.setup]
-nixPkgs = ['nodejs', 'npm']
-
-[phases.build]
-cmds = ['npm run railway:build']
-
-[start]
-cmd = 'npm run railway:start'
