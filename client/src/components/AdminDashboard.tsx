@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { adminAPI } from '../services/api';
-import { DashboardStats } from '../types';
-import ResidentManagement from './admin/ResidentManagement';
-import AdminManagement from './admin/AdminManagement';
-import CodeManagement from './admin/CodeManagement';
-import AuditLogs from './admin/AuditLogs';
-import Modal from './common/Modal';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import { adminAPI } from "../services/api";
+import { DashboardStats } from "../types";
+import ResidentManagement from "./admin/ResidentManagement";
+import AdminManagement from "./admin/AdminManagement";
+import CodeManagement from "./admin/CodeManagement";
+import AuditLogs from "./admin/AuditLogs";
+import Modal from "./common/Modal";
 
 const AdminDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [selectedMonth, setSelectedMonth] = useState(
+    new Date().toISOString().slice(0, 7)
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [modalData, setModalData] = useState<{
     isOpen: boolean;
@@ -22,10 +24,10 @@ const AdminDashboard: React.FC = () => {
     isLoading: boolean;
   }>({
     isOpen: false,
-    title: '',
-    status: '',
+    title: "",
+    status: "",
     codes: [],
-    isLoading: false
+    isLoading: false,
   });
 
   const [assignModal, setAssignModal] = useState<{
@@ -39,10 +41,12 @@ const AdminDashboard: React.FC = () => {
     code: null,
     residents: [],
     isLoading: false,
-    assignTo: ''
+    assignTo: "",
   });
 
-  const [copyFeedback, setCopyFeedback] = useState<{[key: string]: boolean}>({});
+  const [copyFeedback, setCopyFeedback] = useState<{ [key: string]: boolean }>(
+    {}
+  );
 
   useEffect(() => {
     loadDashboardStats();
@@ -54,34 +58,34 @@ const AdminDashboard: React.FC = () => {
       const response = await adminAPI.getDashboard(selectedMonth);
       setStats(response.data.stats);
     } catch (err) {
-      console.error('Failed to load dashboard stats:', err);
+      console.error("Failed to load dashboard stats:", err);
     } finally {
       setIsLoading(false);
     }
   };
 
   const openCodesModal = async (status: string, title: string) => {
-    setModalData(prev => ({
+    setModalData((prev) => ({
       ...prev,
       isOpen: true,
       title,
       status,
       isLoading: true,
-      codes: []
+      codes: [],
     }));
 
     try {
       const response = await adminAPI.getCodesByStatus(status, selectedMonth);
-      setModalData(prev => ({
+      setModalData((prev) => ({
         ...prev,
         codes: response.data.codes,
-        isLoading: false
+        isLoading: false,
       }));
     } catch (err) {
-      console.error('Failed to load codes:', err);
-      setModalData(prev => ({
+      console.error("Failed to load codes:", err);
+      setModalData((prev) => ({
         ...prev,
-        isLoading: false
+        isLoading: false,
       }));
     }
   };
@@ -89,46 +93,50 @@ const AdminDashboard: React.FC = () => {
   const closeModal = () => {
     setModalData({
       isOpen: false,
-      title: '',
-      status: '',
+      title: "",
+      status: "",
       codes: [],
-      isLoading: false
+      isLoading: false,
     });
   };
 
   const copyToClipboard = async (code: string) => {
     try {
       await navigator.clipboard.writeText(code);
-      setCopyFeedback(prev => ({ ...prev, [code]: true }));
+      setCopyFeedback((prev) => ({ ...prev, [code]: true }));
       setTimeout(() => {
-        setCopyFeedback(prev => ({ ...prev, [code]: false }));
+        setCopyFeedback((prev) => ({ ...prev, [code]: false }));
       }, 1000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
   const openAssignModal = async (code: any) => {
-    setAssignModal(prev => ({
+    setAssignModal((prev) => ({
       ...prev,
       isOpen: true,
       code,
       isLoading: true,
-      assignTo: ''
+      assignTo: "",
     }));
 
     try {
-      const response = await adminAPI.getResidents({ search: '', page: 1, limit: 100 });
-      setAssignModal(prev => ({
+      const response = await adminAPI.getResidents({
+        search: "",
+        page: 1,
+        limit: 100,
+      });
+      setAssignModal((prev) => ({
         ...prev,
         residents: response.data.residents,
-        isLoading: false
+        isLoading: false,
       }));
     } catch (err) {
-      console.error('Failed to load residents:', err);
-      setAssignModal(prev => ({
+      console.error("Failed to load residents:", err);
+      setAssignModal((prev) => ({
         ...prev,
-        isLoading: false
+        isLoading: false,
       }));
     }
   };
@@ -139,7 +147,7 @@ const AdminDashboard: React.FC = () => {
       code: null,
       residents: [],
       isLoading: false,
-      assignTo: ''
+      assignTo: "",
     });
   };
 
@@ -154,16 +162,16 @@ const AdminDashboard: React.FC = () => {
         openCodesModal(modalData.status, modalData.title);
       }
     } catch (err) {
-      console.error('Failed to assign code:', err);
+      console.error("Failed to assign code:", err);
     }
   };
 
   const tabs = [
-    { id: 'dashboard', name: 'Dashboard', icon: '📊' },
-    { id: 'residents', name: 'Residents', icon: '👥' },
-    { id: 'codes', name: 'Codes', icon: '🎫' },
-    { id: 'admins', name: 'Admins', icon: '🔐' },
-    { id: 'audit', name: 'Audit', icon: '📋' },
+    { id: "dashboard", name: "Dashboard", icon: "📊" },
+    { id: "residents", name: "Residents", icon: "👥" },
+    { id: "codes", name: "Codes", icon: "🎫" },
+    { id: "admins", name: "Admins", icon: "🔐" },
+    { id: "audit", name: "Audit", icon: "📋" },
   ];
 
   const renderDashboard = () => (
@@ -191,22 +199,34 @@ const AdminDashboard: React.FC = () => {
       ) : stats ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="card card-mint hover-lift p-6">
-            <div className="text-sm font-medium text-gray-500 mb-1">Total Uploaded</div>
-            <div className="text-3xl font-bold text-blue-600">{stats.uploaded?.toLocaleString()}</div>
+            <div className="text-sm font-medium text-gray-500 mb-1">
+              Total Uploaded
+            </div>
+            <div className="text-3xl font-bold text-blue-600">
+              {stats.uploaded?.toLocaleString()}
+            </div>
           </div>
           <button
-            onClick={() => openCodesModal('assigned', 'Allocated Codes')}
+            onClick={() => openCodesModal("assigned", "Allocated Codes")}
             className="card card-yellow hover-lift p-6 text-left transition-all border-none cursor-pointer"
           >
-            <div className="text-sm font-medium text-gray-500 mb-1">Allocated</div>
-            <div className="text-3xl font-bold text-green-600">{stats.allocated}</div>
+            <div className="text-sm font-medium text-gray-500 mb-1">
+              Allocated
+            </div>
+            <div className="text-3xl font-bold text-green-600">
+              {stats.allocated}
+            </div>
           </button>
           <button
-            onClick={() => openCodesModal('unassigned', 'Unallocated Codes')}
+            onClick={() => openCodesModal("unassigned", "Unallocated Codes")}
             className="card card-lavender hover-lift p-6 text-left transition-all border-none cursor-pointer"
           >
-            <div className="text-sm font-medium text-gray-500 mb-1">Unallocated</div>
-            <div className="text-3xl font-bold text-orange-600">{stats.unallocated}</div>
+            <div className="text-sm font-medium text-gray-500 mb-1">
+              Unallocated
+            </div>
+            <div className="text-3xl font-bold text-orange-600">
+              {stats.unallocated}
+            </div>
           </button>
         </div>
       ) : (
@@ -214,21 +234,20 @@ const AdminDashboard: React.FC = () => {
           No data available for selected month
         </div>
       )}
-
     </div>
   );
 
   const renderActiveTab = () => {
     switch (activeTab) {
-      case 'dashboard':
+      case "dashboard":
         return renderDashboard();
-      case 'residents':
+      case "residents":
         return <ResidentManagement />;
-      case 'codes':
+      case "codes":
         return <CodeManagement onStatsUpdate={loadDashboardStats} />;
-      case 'admins':
+      case "admins":
         return <AdminManagement />;
-      case 'audit':
+      case "audit":
         return <AuditLogs />;
       default:
         return renderDashboard();
@@ -241,15 +260,14 @@ const AdminDashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Admin Dashboard
+              </h1>
               <p className="text-sm text-gray-600 mt-1">
                 Signed in as {user?.email}
               </p>
             </div>
-            <button
-              onClick={logout}
-              className="btn btn-secondary text-sm"
-            >
+            <button onClick={logout} className="btn btn-secondary text-sm">
               Sign Out
             </button>
           </div>
@@ -264,7 +282,9 @@ const AdminDashboard: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`admin-nav-item ${activeTab === tab.id ? 'active' : ''}`}
+                  className={`admin-nav-item ${
+                    activeTab === tab.id ? "active" : ""
+                  }`}
                 >
                   <span className="text-lg">{tab.icon}</span>
                   <span>{tab.name}</span>
@@ -286,7 +306,7 @@ const AdminDashboard: React.FC = () => {
         isOpen={modalData.isOpen}
         onRequestClose={closeModal}
         title={modalData.title}
-        size={modalData.status === 'assigned' ? 'lg' : 'md'}
+        size={modalData.status === "assigned" ? "lg" : "md"}
       >
         {modalData.isLoading ? (
           <div className="flex justify-center py-12">
@@ -299,7 +319,7 @@ const AdminDashboard: React.FC = () => {
         ) : (
           <>
             <div className="p-4">
-              {modalData.status === 'assigned' ? (
+              {modalData.status === "assigned" ? (
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
@@ -326,13 +346,15 @@ const AdminDashboard: React.FC = () => {
                           </span>
                         </td>
                         <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900">
-                          {code.resident_name || 'Unknown'}
+                          {code.resident_name || "Unknown"}
                         </td>
                         <td className="px-3 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {code.resident_unit || 'Unknown'}
+                          {code.resident_unit || "Unknown"}
                         </td>
                         <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {code.assigned_at ? new Date(code.assigned_at).toLocaleDateString() : 'Unknown'}
+                          {code.assigned_at
+                            ? new Date(code.assigned_at).toLocaleDateString()
+                            : "Unknown"}
                         </td>
                       </tr>
                     ))}
@@ -341,38 +363,42 @@ const AdminDashboard: React.FC = () => {
               ) : (
                 <div className="space-y-2">
                   {modalData.codes.map((code) => (
-                  <div key={code.id} className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <span className="font-mono text-base font-semibold text-gray-900">
-                      {code.code}
-                    </span>
-                    <div className="flex space-x-3">
-                      <button
-                        onClick={() => copyToClipboard(code.code)}
-                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-                          copyFeedback[code.code] 
-                            ? 'bg-green-100 text-green-700 border border-green-200' 
-                            : 'bg-blue-100 text-blue-700 border border-blue-200 hover:bg-blue-200'
-                        }`}
-                        title="Copy code"
-                      >
-                        {copyFeedback[code.code] ? '✓ Copied' : 'Copy'}
-                      </button>
-                      <button
-                        onClick={() => openAssignModal(code)}
-                        className="px-3 py-1.5 text-xs font-medium bg-green-100 text-green-700 border border-green-200 rounded-md hover:bg-green-200 transition-all"
-                        title="Assign code"
-                      >
-                        Assign
-                      </button>
+                    <div
+                      key={code.id}
+                      className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <span className="font-mono text-base font-semibold text-gray-900">
+                        {code.code}
+                      </span>
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={() => copyToClipboard(code.code)}
+                          className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                            copyFeedback[code.code]
+                              ? "bg-green-100 text-green-700 border border-green-200"
+                              : "bg-blue-100 text-blue-700 border border-blue-200 hover:bg-blue-200"
+                          }`}
+                          title="Copy code"
+                        >
+                          {copyFeedback[code.code] ? "✓ Copied" : "Copy"}
+                        </button>
+                        <button
+                          onClick={() => openAssignModal(code)}
+                          className="px-3 py-1.5 text-xs font-medium bg-green-100 text-green-700 border border-green-200 rounded-md hover:bg-green-200 transition-all"
+                          title="Assign code"
+                        >
+                          Assign
+                        </button>
+                      </div>
                     </div>
-                  </div>
                   ))}
                 </div>
               )}
             </div>
-            
+
             <div className="px-6 py-4 border-t border-gray-100 text-sm text-gray-500 text-center bg-gray-50">
-              Showing {modalData.codes.length} {modalData.status} codes for {selectedMonth}
+              Showing {modalData.codes.length} {modalData.status} codes for{" "}
+              {selectedMonth}
             </div>
           </>
         )}
@@ -398,7 +424,12 @@ const AdminDashboard: React.FC = () => {
                 </label>
                 <select
                   value={assignModal.assignTo}
-                  onChange={(e) => setAssignModal(prev => ({ ...prev, assignTo: e.target.value }))}
+                  onChange={(e) =>
+                    setAssignModal((prev) => ({
+                      ...prev,
+                      assignTo: e.target.value,
+                    }))
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="">Select...</option>

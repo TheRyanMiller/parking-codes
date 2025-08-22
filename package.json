@@ -6,8 +6,9 @@
     "node": ">=18"
   },
   "scripts": {
-    "dev": "nodemon index.js", 
-    "start": "node index.js"
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "dev:all": "./build.sh"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -23,6 +24,6 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.1.10"
   }
 }
